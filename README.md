@@ -80,7 +80,9 @@ Options:
   -n, --name <NAME>  the html format plot file name
   -h, --help         Print help information
 ```
+
 <b>eg:</b> `bamkit insert  test.bam -n insertPlot`
+
 <img width="645" alt="insert" src="https://user-images.githubusercontent.com/50580507/203885026-31a8090a-ec47-4831-bc94-68ea604b792d.png">
 
 ###### flags :
@@ -96,7 +98,9 @@ Arguments:
 Options:
   -h, --help  Print help information
 ```
+
 <b>eg:</b> `bamkit flags 163`
+
 <img width="403" alt="flags" src="https://user-images.githubusercontent.com/50580507/203884903-e35d7f3c-548f-4ce7-ba0a-1a908b10e80d.png">
 
 
