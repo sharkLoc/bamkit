@@ -7,6 +7,10 @@
 ### install
 
 ```bash
+cargo install bamkit
+
+# or
+
 git clone https://github.com/sharkLoc/bamkit.git
 cd bamkit
 cargo b --release
