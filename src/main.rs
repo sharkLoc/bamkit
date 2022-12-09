@@ -179,7 +179,7 @@ fn main() {
                 }
             } else {
                 if num.is_none() {
-                    eprintln!("{}", "[error]: one of option -c or -f must be used.".red());
+                    eprintln!("{}", "[error]: one of option -n or -f must be used.".red());
                     std::process::exit(1);
                 }
                 if let Some(bam) = bam {
