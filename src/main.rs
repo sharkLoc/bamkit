@@ -1,4 +1,5 @@
 use clap::Parser;
+use colored::*;
 
 mod flag;
 mod insert;
@@ -12,7 +13,7 @@ use view::*;
 #[derive(Parser, Debug)]
 #[command(
     author = "size_t",
-    version = "version 0.1.0",
+    version = "version 0.2.0",
     about = "bamkit: a simple program for bam file manipulation",
     long_about = None
 )]
@@ -77,6 +78,31 @@ enum Subcli {
         #[arg(short = 'n', long = "name")]
         name: String,
     },
+    /// sample sequences by number or fraktion
+    sample {
+        /// input bam[sam] file.
+        bam: Option<String>,
+
+        /// set rand seed.
+        #[arg(short = 's', long = "seed", default_value_t = 69)]
+        seed: u64,
+
+        /// sample by number, use with -r on large bam file
+        #[arg(short = 'n', long = "num")]
+        num: Option<usize>,
+
+        /// sample by fraktion, use with -r on large bam file
+        #[arg(short = 'f', long = "frak")]
+        frak: Option<f64>,
+
+        /// reduce much memory but cost more time
+        #[arg(short = 'r', long = "rdc")]
+        rdc: bool,
+
+        /// output bam file name or write to stdout
+        #[arg(short = 'o', long = "out")]
+        out: Option<String>,
+    },
 }
 
 fn main() {
@@ -122,6 +148,69 @@ fn main() {
                 let _x = insert_size(&Some(bam.unwrap().as_str()), max, &name);
             } else {
                 let _x = insert_size(&None, max, &name);
+            }
+        }
+        Subcli::sample {
+            bam,
+            seed,
+            num,
+            frak,
+            rdc,
+            out,
+        } => {
+            if let Some(frak) = frak {
+                if num.is_some() {
+                    eprintln!("{}", "[error]: opt -n can't use with -f.".red());
+                    std::process::exit(1);
+                } else {
+                    if let Some(bam) = bam {
+                        if let Some(out) = out {
+                            let _x = sample_bam_rate(&Some(&bam), frak, seed, rdc, &Some(&out));
+                        } else {
+                            let _x = sample_bam_rate(&Some(&bam), frak, seed, rdc, &None);
+                        }
+                    } else {
+                        if let Some(out) = out {
+                            let _x = sample_bam_rate(&None, frak, seed, rdc, &Some(&out));
+                        } else {
+                            let _x = sample_bam_rate(&None, frak, seed, rdc, &None);
+                        }
+                    }
+                }
+            } else {
+                if num.is_none() {
+                    eprintln!("{}", "[error]: one of option -c or -p must be used.".red());
+                    std::process::exit(1);
+                }
+                if let Some(bam) = bam {
+                    if let Some(out) = out {
+                        let _x = if rdc {
+                            sample_bam2_num(&Some(&bam), num.unwrap(), seed, &Some(&out))
+                        } else {
+                            sample_bam_num(&Some(&bam), num.unwrap(), seed, &Some(&out))
+                        };
+                    } else {
+                        let _x = if rdc {
+                            sample_bam2_num(&Some(&bam), num.unwrap(), seed, &None)
+                        } else {
+                            sample_bam_num(&Some(&bam), num.unwrap(), seed, &None)
+                        };
+                    }
+                } else {
+                    if let Some(out) = out {
+                        let _x = if rdc {
+                            sample_bam2_num(&None, num.unwrap(), seed, &Some(&out))
+                        } else {
+                            sample_bam_num(&None, num.unwrap(), seed, &Some(&out))
+                        };
+                    } else {
+                        let _x = if rdc {
+                            sample_bam2_num(&None, num.unwrap(), seed, &None)
+                        } else {
+                            sample_bam_num(&None, num.unwrap(), seed, &None)
+                        };
+                    }
+                }
             }
         }
     }
