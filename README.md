@@ -28,6 +28,7 @@ Commands:
   region  get target region from bam file
   flags   bam file flag value show
   insert  insert size plot for bam file
+  sample  sample sequences by number or fraktion
   help    Print this message or the help of the given subcommand(s)
 
 Options:
@@ -106,6 +107,28 @@ Options:
 <b>eg:</b> `bamkit flags 163`
 
 <img width="403" alt="flags" src="https://user-images.githubusercontent.com/50580507/203884903-e35d7f3c-548f-4ce7-ba0a-1a908b10e80d.png">
+
+###### sample :
+
+```
+bamkit sample -h
+sample sequences by number or fraktion
+
+Usage: bamkit sample [OPTIONS] [BAM]
+
+Arguments:
+  [BAM]  input bam[sam] file
+
+Options:
+  -s, --seed <SEED>  set rand seed [default: 69]
+  -n, --num <NUM>    sample by number, use with -r on large bam file
+  -f, --frak <FRAK>  sample by fraktion, use with -r on large bam file
+  -r, --rdc          reduce much memory but cost more time
+  -o, --out <OUT>    output bam file name or write to stdout
+
+
+```
+
 
 
 ** any bugs please report issues **💖
