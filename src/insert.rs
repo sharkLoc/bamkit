@@ -4,7 +4,7 @@ use rust_htslib::bam::Read;
 use crate::utils::*;
 
 pub fn insert_size(
-    bamin: &Option<&str>,
+    bamin: Option<&str>,
     max: i64,
     name: &str,
 ) -> Result<(), rust_htslib::errors::Error> {
@@ -20,7 +20,10 @@ pub fn insert_size(
     Ok(())
 }
 
-fn basic_histogram(data: Vec<i64>, name: &str) {
+fn basic_histogram(
+    data: Vec<i64>, 
+    name: &str
+) {
     let mut plot = Plot::new();
     let trace = Histogram::new(data).name("insert plot");
     plot.add_trace(trace);

@@ -1,9 +1,9 @@
 [package]
 name = "bamkit"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["sharkLoc <mmtinfo@163.com>"]
-rust-version = "1.65.0"
+rust-version = "1.83.0"
 homepage = "https://github.com/sharkLoc/bamkit"
 description = "bamkit: a simple program for bam file manipulation"
 keywords = ["bam", "sam", "cli", "hts"]
@@ -13,12 +13,13 @@ license = "GPL-3.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.0.26", features = ["derive"] }
+clap = { version = "4.5.23", features = ["derive", "wrap_help"] }
 colored = "2.0.0"
 plotly = "0.8.3"
-rust-htslib = "0.40.2"
+rust-htslib = "0.40.2"   # "0.49.0"
 rand = "0.8.5"
 rand_pcg = "0.3.1"
+log = "0.4.22"
 
 
 [profile.release]

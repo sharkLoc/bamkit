@@ -1,21 +1,27 @@
 use clap::Parser;
-use colored::*;
+use std::time::Instant;
+use log::{info,error};
 
 mod flag;
 mod insert;
 mod utils;
 mod view;
+mod region;
 
 use flag::*;
 use insert::*;
 use view::*;
+use region::*;
 
 #[derive(Parser, Debug)]
 #[command(
     author = "size_t",
-    version = "version 0.2.0",
+    version = "version 0.3.0",
     about = "bamkit: a simple program for bam file manipulation",
-    long_about = None
+    long_about = None,
+    disable_help_flag = false,
+    disable_version_flag = true,
+    propagate_version = true,
 )]
 struct Args {
     #[clap(subcommand)]
@@ -31,7 +37,7 @@ enum Subcli {
         /// input bam[sam] file.
         input: Option<String>,
 
-        /// show sam file header only
+        /// show header and exit
         #[arg(short = 'H', long = "Header")]
         Header: bool,
 
@@ -105,49 +111,47 @@ enum Subcli {
     },
 }
 
-fn main() {
+fn main() -> Result<(), rust_htslib::errors::Error> {
     let arg = Args::parse();
+    
+    let start = Instant::now();
+
     match arg.command {
         Subcli::view {
             input,
             Header,
             bam,
             out,
-        } => {
-            if input.is_some() {
-                if out.is_some() {
-                    let _x = view(
-                        &Some(input.unwrap().as_str()),
-                        Header,
-                        bam,
-                        &Some(out.unwrap().as_str()),
-                    );
+        } => {  
+            if let Some(input) = input {
+                if let Some(out) = out {
+                    view(Some(&input), Header, bam, Some(&out))?;
                 } else {
-                    let _x = view(&Some(input.unwrap().as_str()), Header, bam, &None);
+                    view(Some(&input), Header, bam, None)?;
                 }
             } else {
-                if out.is_some() {
-                    let _x = view(&None, Header, bam, &Some(out.unwrap().as_str()));
+                if let Some(out) = out {
+                    view(None, Header, bam, Some(&out))?;
                 } else {
-                    let _x = view(&None, Header, bam, /* sam,*/ &None);
+                    view(None, Header, bam, None)?;
                 }
             }
         }
         Subcli::region { bam, reg, sam, out } => {
-            if out.is_some() {
-                let _x = target(&bam, &reg, sam, &Some(out.unwrap().as_str()));
+            if let Some(out) = out {
+                targets(&bam, &reg, sam, Some(&out))?;
             } else {
-                let _x = target(&bam, &reg, sam, &None);
+                targets(&bam, &reg, sam, None)?;
             }
         }
         Subcli::flags { flag } => {
             show_flag(flag);
         }
         Subcli::insert { bam, max, name } => {
-            if bam.is_some() {
-                let _x = insert_size(&Some(bam.unwrap().as_str()), max, &name);
+            if let Some(bam) = bam {
+                insert_size(Some(&bam), max, &name)?;   
             } else {
-                let _x = insert_size(&None, max, &name);
+                insert_size(None, max, &name)?;
             }
         }
         Subcli::sample {
@@ -160,58 +164,63 @@ fn main() {
         } => {
             if let Some(frak) = frak {
                 if num.is_some() {
-                    eprintln!("{}", "[error]: opt -n can't use with -f.".red());
+                    //eprintln!("{}", "[error]: opt -n can't use with -f.".red());
+                    error!("opt -n can't use with -f.");
                     std::process::exit(1);
                 } else {
                     if let Some(bam) = bam {
                         if let Some(out) = out {
-                            let _x = sample_bam_rate(&Some(&bam), frak, seed, rdc, &Some(&out));
+                            sample_bam_rate(Some(&bam), frak, seed, rdc, Some(&out))?;
                         } else {
-                            let _x = sample_bam_rate(&Some(&bam), frak, seed, rdc, &None);
+                            sample_bam_rate(Some(&bam), frak, seed, rdc, None)?;
                         }
                     } else {
                         if let Some(out) = out {
-                            let _x = sample_bam_rate(&None, frak, seed, rdc, &Some(&out));
+                            sample_bam_rate(None, frak, seed, rdc, Some(&out))?;
                         } else {
-                            let _x = sample_bam_rate(&None, frak, seed, rdc, &None);
+                            sample_bam_rate(None, frak, seed, rdc, None)?;
                         }
                     }
                 }
             } else {
                 if num.is_none() {
-                    eprintln!("{}", "[error]: one of option -n or -f must be used.".red());
+                    //eprintln!("{}", "[error]: one of option -n or -f must be used.".red());
+                    error!("one of option -n or -f must be used.");
                     std::process::exit(1);
                 }
                 if let Some(bam) = bam {
                     if let Some(out) = out {
-                        let _x = if rdc {
-                            sample_bam2_num(&Some(&bam), num.unwrap(), seed, &Some(&out))
+                        if rdc {
+                            sample_bam2_num(Some(&bam), num.unwrap(), seed, Some(&out))?;
                         } else {
-                            sample_bam_num(&Some(&bam), num.unwrap(), seed, &Some(&out))
+                            sample_bam_num(Some(&bam), num.unwrap(), seed, Some(&out))?;
                         };
                     } else {
-                        let _x = if rdc {
-                            sample_bam2_num(&Some(&bam), num.unwrap(), seed, &None)
+                        if rdc {
+                            sample_bam2_num(Some(&bam), num.unwrap(), seed, None)?;
                         } else {
-                            sample_bam_num(&Some(&bam), num.unwrap(), seed, &None)
+                            sample_bam_num(Some(&bam), num.unwrap(), seed, None)?;
                         };
                     }
                 } else {
                     if let Some(out) = out {
-                        let _x = if rdc {
-                            sample_bam2_num(&None, num.unwrap(), seed, &Some(&out))
+                        if rdc {
+                            sample_bam2_num(None, num.unwrap(), seed, Some(&out))?;
                         } else {
-                            sample_bam_num(&None, num.unwrap(), seed, &Some(&out))
+                            sample_bam_num(None, num.unwrap(), seed, Some(&out))?;
                         };
                     } else {
-                        let _x = if rdc {
-                            sample_bam2_num(&None, num.unwrap(), seed, &None)
+                        if rdc {
+                            sample_bam2_num(None, num.unwrap(), seed, None)?;
                         } else {
-                            sample_bam_num(&None, num.unwrap(), seed, &None)
+                            sample_bam_num(None, num.unwrap(), seed, None)?;
                         };
                     }
                 }
             }
         }
     }
+
+    info!("time elapsed is: {:?}", start.elapsed());
+    Ok(())
 }
