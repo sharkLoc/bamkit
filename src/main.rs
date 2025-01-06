@@ -15,14 +15,19 @@ use region::*;
 
 #[derive(Parser, Debug)]
 #[command(
-    author = "size_t",
-    version = "version 0.3.0",
-    about = "bamkit: a simple program for bam file manipulation",
+    author = "sharkLoc",
+    version = "0.3.0",
+    about = "A simple program for bam file manipulation",
     long_about = None,
     disable_help_flag = false,
     disable_version_flag = true,
     propagate_version = true,
 )]
+#[command(help_template = "{name} -- {about}\n\nVersion: {version}\
+    \n\nAuthors: {author} <mmtinfo@163.com>\
+    \nSource code: https://github.com/sharkLoc/bamkit.git\
+    \n\n{before-help}
+{usage-heading} {usage}\n\n{all-args}\n\nUse \"bamkit help [command]\" for more information about a command")]
 struct Args {
     #[clap(subcommand)]
     command: Subcli,

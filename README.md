@@ -2,8 +2,6 @@
 
 🦀 bamkit: a simple program for bam file manipulation
 
-
-
 ### install
 
 ```bash
@@ -18,8 +16,15 @@ cargo b --release
 ```
 
 ### usage:
+
 ```
-bamkit: a simple program for bam file manipulation
+bamkit -- A simple program for bam file manipulation
+
+Version: 0.3.0
+
+Authors: shorkLoc <mmtinfo@163.com>
+Source code: https://github.com/sharkLoc/bamkit.git
+
 
 Usage: bamkit <COMMAND>
 
@@ -32,11 +37,15 @@ Commands:
   help    Print this message or the help of the given subcommand(s)
 
 Options:
-  -h, --help     Print help information
-  -V, --version  Print version information
+  -h, --help  Print help
+
+Use "bamkit help [command]" for more information about a command
+
 
 ```
+
 ###### view :
+
 ```
 bamkit view -h
 sam bam conversion
@@ -54,6 +63,7 @@ Options:
 ```
 
 ###### region :
+
 ```
 bamkit region -h
 get target region from bam file
@@ -71,6 +81,7 @@ Options:
 ```
 
 ###### insert :
+
 ```
 bamkit insert -h
 insert size plot for bam file
@@ -86,11 +97,12 @@ Options:
   -h, --help         Print help information
 ```
 
-<b>eg:</b> `bamkit insert  test.bam -n insertPlot`
+`<b>`eg:`</b>` `bamkit insert  test.bam -n insertPlot`
 
 <img width="645" alt="insert" src="https://user-images.githubusercontent.com/50580507/203885026-31a8090a-ec47-4831-bc94-68ea604b792d.png">
 
 ###### flags :
+
 ```
 bamkit flags -h
 bam file flag value show
@@ -104,7 +116,7 @@ Options:
   -h, --help  Print help information
 ```
 
-<b>eg:</b> `bamkit flags 163`
+`<b>`eg:`</b>` `bamkit flags 163`
 
 <img width="403" alt="flags" src="https://user-images.githubusercontent.com/50580507/203884903-e35d7f3c-548f-4ce7-ba0a-1a908b10e80d.png">
 
